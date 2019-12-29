@@ -261,3 +261,9 @@ Outputs:
         Value: !Ref PrivateSubnet2
         Export:
           Name: !Sub ${EnvironmentName}-PRI2-SN
+
+    InternetGateway:
+        Description: A reference to the Internet Gateway
+        Value: !Ref InternetGateway
+        Export:
+          Name: !Sub ${EnvironmentName}-IN-GWY

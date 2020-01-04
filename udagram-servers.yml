@@ -49,6 +49,13 @@ Resources:
         ToPort: 65535
         CidrIp: 0.0.0.0/0
 
+  #instace profile contains the IAM Role name(s) that we want to associate to our auto scaling EC2 Servers
+  ProfileWithRolesForOurApp:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - UdacityS3ReadOnlyEC2
+
   WebAppLaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
@@ -118,6 +125,21 @@ Resources:
         TargetGroupArn:
           Ref: WebAppTargetGroup
       LoadBalancerArn:
-          Ref: WebAppLB
-      Port: 81
+        Ref: WebAppLB
+      Port: 80
       Protocol: "HTTP"
+
+  WebAppListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+        - Type: forward
+          TargetGroupArn:
+            Ref: WebAppTargetGroup
+      Conditions:
+        - Field: path-pattern
+          Values: [/]
+      ListenerArn:
+        Ref: WebAppListener
+      Priority: 1
+

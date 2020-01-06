@@ -17,10 +17,10 @@ This includes the YAML files and the JSON files. The YAML files create the envir
 First create the Udagram-Network as below:
 
 ```
-create Udagram-Network using ./create.sh udagram-network udagram-network.yml udagram-parameters.json
+./create.sh udagram-network udagram-network.yml udagram-parameters.json
 ```
-Next create the Udagram-Servers Stack by running the create.sh file:
+Next create the Udagram-Servers Stack:
 
 ```
-./create.sh udagram-network udagram-network.yml udagram-parameters.json
+./create.sh udagram-servers udagram-servers.yml udagram-parameters.json
 ```

@@ -6,7 +6,7 @@ This includes the YAML files and the JSON files. The YAML files create the envir
 
 ![Diagram](Udagram-Test-Infrastructure.jpeg)
 
- The project contins:
+ The project contains:
 
  * **udagram-network.yml** file is for creating the network VPC, Subnets etc. using the
  * **udacity-servers.yml** creates the servers which include the Load Balancer, AutoScaling Groups and Security Groups are created using

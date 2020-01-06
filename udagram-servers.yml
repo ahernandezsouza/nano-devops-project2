@@ -49,12 +49,35 @@ Resources:
         ToPort: 65535
         CidrIp: 0.0.0.0/0
 
-  #instace profile contains the IAM Role name(s) that we want to associate to our auto scaling EC2 Servers
-  ProfileWithRolesForOurApp:
+  UdacityS3ReadOnlyEC2:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: UdacityS3ReadOnlyEC2
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "ec2.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: "S3ReadOnlyAccess"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "s3:GetObject"
+                Resource: "*"
+
+  ProfileWithRolesForApp:
     Type: AWS::IAM::InstanceProfile
     Properties:
+      Path: "/"
       Roles:
-        - UdacityS3ReadOnlyEC2
+        - Ref: UdacityS3ReadOnlyEC2
 
   WebAppLaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
@@ -70,13 +93,14 @@ Resources:
           aws s3 cp s3://udacity-demo-1/udacity.zip .
           unzip -o udacity.zip
       ImageId: ami-0a7d051a1c4b54f65
+      IamInstanceProfile: ProfileWithRolesForApp
       SecurityGroups:
-      - Ref: WebServerSecGroup
+        - Ref: WebServerSecGroup
       InstanceType: t3.medium
       BlockDeviceMappings:
-      - DeviceName: "/dev/sdk"
-        Ebs:
-          VolumeSize: '10'
+        - DeviceName: "/dev/sdk"
+          Ebs:
+            VolumeSize: '10'
 
   WebAppTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -142,4 +166,15 @@ Resources:
       ListenerArn:
         Ref: WebAppListener
       Priority: 1
+
+Outputs:
+  URL:
+    Description: The URL of the website
+    Value:
+      Fn::Join:
+      - ''
+      - - http://
+        - Fn::GetAtt:
+          - WebAppLB
+          - DNSName
 
